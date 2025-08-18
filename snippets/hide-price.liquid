@@ -1,0 +1,61 @@
+<script type="text/javascript">var customerIsLogged = false;var hidePriceStoreID = 617;var customerAccountsEnabled = false;</script>{% if shop.customer_accounts_enabled %}<script type="text/javascript">var customerAccountsEnabled = true;</script>{% if customer %}<script type="text/javascript">var customerIsLogged = true;</script>{% else %}<style>.hidePrice{display:none !important;} form[action*="/cart/add"] button, form button[name="add"], form[action*="/cart/add"] input[type="submit"], a[href*="/cart"], .shopify-payment-button {display:none !important;}</style><script type="text/javascript">var intervalId = null;var varCounter = 0;var containScriptTagFirstControll = false;var containScriptTagSecondControll = false;window.onload = function() {scripts = document.getElementsByTagName("script");for (var i = 0; i < scripts.length; i++) {if (scripts[i].src.includes("/js/main.js")) {containScriptTagFirstControll = true;}}if (!containScriptTagFirstControll) {intervalId = setInterval(function() {if(varCounter < 5) {varCounter++;scripts = document.getElementsByTagName("script");for (var i = 0; i < scripts.length; i++) {if (scripts[i].src.includes("/js/main.js")) {containScriptTagSecondControll = true;}}} else {if (!containScriptTagSecondControll && typeof jQuery !== "undefined") {jQuery(".hidePrice").show();jQuery("form[action*='/cart/add'] button").show();jQuery("form button[name='add']").show();jQuery("a[href*='/cart']").show();}  clearInterval(intervalId);}}, 50);} }</script>{% endif %}{% endif %}
+<script type="text/javascript">
+    function displayHidePriceInternalOverride(data) {
+        data = arguments[0];
+        this.hidePriceConfiguration = data;
+        hidePriceConfigurationJson = JSON.parse(data);
+        if (Object.keys(hidePriceConfigurationJson).length > 0) {
+            if (parseInt(hidePriceConfigurationJson.activateApp) == 1) {
+                $('.hidePrice').each(function() {
+                    if ($(this).parent().parent().parent().parent().parent().find('.notAuthorizedBox').length == 0 || !$(this).parent().parent().parent().parent().parent().find('.notAuthorizedBox').is(":visible")) {
+                        $(this).parent().css('text-decoration', 'none');
+                        $(this).parent().parent().css('text-decoration', 'none');
+                        $(this).after("<div class='notAuthorizedBox' style='display:none'></div>");
+                        $(this).parent().find('.notAuthorizedBox').append("<p class='notAuthorizedBoxText'>" + callFunctionHP('getFinalMessage', [hidePriceConfigurationJson]) + "</p>");
+                        $(this).parent().find('.notAuthorizedBox').css({
+                            "padding": "10px",
+                            "background-color": hidePriceConfigurationJson.backgroundColorOfMassageBox,
+                            "white-space": "pre-line",
+                            "border": (parseInt(hidePriceConfigurationJson.showBorderOnMessageBox) == 1) ? "1px solid black" : "none" 
+                        });
+                        $(this).parent().find('.notAuthorizedBox').find(".notAuthorizedBoxText").css({
+                            "color": hidePriceConfigurationJson.textColorOfMassageBox,
+                            "font-size": hidePriceConfigurationJson.fontSize + "px",
+                            "font-family": "-apple-system, BlinkMacSystemFont, San Francisco, Roboto, Segoe UI, Helvetica Neue, sans-serif",
+                            "font-weight": "normal",
+                            "text-align":"center",
+                            "margin":"0"
+                        });
+                        if (parseInt(hidePriceConfigurationJson.showBorderRadiusOnMessageBox) == 1) {
+                            $(this).parent().find('.notAuthorizedBox').css({
+                                "-webkit-border-radius": "8px",
+                                "-moz-border-radius":"8px",
+                                "border-radius":"8px"
+                            });
+                        }
+                        $(this).parent().find('.notAuthorizedBox').fadeIn("fast");
+                    }
+                });
+                $('.hidePrice').each(function() {
+                    $(this).empty();
+                });
+                $('form[action*="/cart/add"] button').each(function() {
+                    $(this).remove();
+                });
+            } else {
+                $('.hidePrice').each(function() {
+                    $(this).show();
+                });
+                $('form[action*="/cart/add"] button').each(function() {
+                    $(this).show();
+                });
+                $('form button[name="add"]').each(function() {
+                    $(this).show();
+                });
+                $('a[href*="/cart"]').each(function() {
+                    $(this).show();
+                });
+            }
+        }
+    }
+</script>
